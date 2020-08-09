@@ -1,0 +1,28 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: crontjob1
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: job1
+            image: yuanchieh/job1:v3
+            command: ["node", "index.js"]
+            envFrom:
+              - configMapRef:
+                  name: myconfigmap
+              - secretRef:
+                  name: my-secret
+            volumeMounts:
+              - name: db-secret
+                mountPath: /etc/secret
+                readOnly: true
+          volumes:
+          - name: db-secret
+            secret:
+              secretName: my-secret
+          restartPolicy: Never

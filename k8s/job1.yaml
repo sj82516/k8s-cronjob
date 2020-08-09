@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job1
+spec:
+  template:
+    spec:
+      containers:
+      - name: job1
+        image: yuanchieh/job1:v3
+        command: ["node", "index.js"]
+        envFrom:
+          - configMapRef:
+              name: myconfigmap
+          - secretRef:
+              name: my-secret
+        volumeMounts:
+          - name: db-secret
+            mountPath: /etc/secret
+            readOnly: true
+      volumes:
+      - name: db-secret
+        secret:
+          secretName: my-secret
+      restartPolicy: Never
